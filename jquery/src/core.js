@@ -70,8 +70,7 @@ jQuery.fn = jQuery.prototype = {
 		return num < 0 ? this[ num + this.length ] : this[ num ];
 	},
 
-	// Take an array of elements and push it onto the stack
-	// (returning the new matched element set)
+	// 入栈
 	pushStack: function( elems ) {
 
 		// Build a new jQuery matched element set
@@ -134,25 +133,24 @@ jQuery.extend = jQuery.fn.extend = function() {
 
 	// 判断是否深拷贝，当第一个参数为true时即为深拷贝
 	if ( typeof target === "boolean" ) {
-		deep = target;
-
-		// Skip the boolean and the target
-		target = arguments[ i ] || {};
+    // 将第一个boolean深拷贝的标志赋予deep
+    deep = target;
+    // 目标对象变为argument[ 1 ] 或者空
+    target = arguments[ i ] || {};
+    // i++
 		i++;
 	}
   // 判断target是字符串或方法等情况
 	if ( typeof target !== "object" && !isFunction( target ) ) {
 		target = {};
 	}
-  // 
+  // 如果参数长度为1的时候，即也不复制
 	if ( i === length ) {
 		target = this;
 		i--;
 	}
-
 	for ( ; i < length; i++ ) {
-
-		// null/undefined的情况判断
+		// null/undefined的情况判断,从taiget后的参数开始遍历，飞空情况下
 		if ( ( options = arguments[ i ] ) != null ) {
 
 			// Extend the base object
@@ -164,9 +162,8 @@ jQuery.extend = jQuery.fn.extend = function() {
 				if ( target === copy ) {
 					continue;
 				}
-				// Recurse if we're merging plain objects or arrays
-				if ( deep && copy && ( jQuery.isPlainObject( copy ) ||
-					( copyIsArray = Array.isArray( copy ) ) ) ) {
+				// 深拷贝的情况下
+				if ( deep && copy && ( jQuery.isPlainObject( copy ) || ( copyIsArray = Array.isArray( copy ) ) ) ) {
             // 拷贝对象为数组
 					if ( copyIsArray ) {
 						copyIsArray = false;
@@ -266,9 +263,7 @@ jQuery.extend( {
 
 	// Support: Android <=4.0 only
 	trim: function( text ) {
-		return text == null ?
-			"" :
-			( text + "" ).replace( rtrim, "" );
+		return text == null ? "" : ( text + "" ).replace( rtrim, "" );
 	},
 
 	// results is for internal usage only
@@ -293,13 +288,14 @@ jQuery.extend( {
 		return arr == null ? -1 : indexOf.call( arr, elem, i );
 	},
 
-	// Support: Android <=4.0 only, PhantomJS 1 only
-	// push.apply(_, arraylike) throws on ancient WebKit
+	// 合并数组的操作方法
 	merge: function( first, second ) {
+    // 获取二待合并数组长度
+    // 获取一将合并数组长度
 		var len = +second.length,
 			j = 0,
 			i = first.length;
-
+    // 遍历写入一数组
 		for ( ; j < len; j++ ) {
 			first[ i++ ] = second[ j ];
 		}
@@ -309,6 +305,7 @@ jQuery.extend( {
 		return first;
 	},
 
+  // 
 	grep: function( elems, callback, invert ) {
 		var callbackInverse,
 			matches = [],
