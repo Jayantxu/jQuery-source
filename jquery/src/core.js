@@ -56,24 +56,21 @@ jQuery.fn = jQuery.prototype = {
 	toArray: function() {
 		return slice.call( this );
 	},
-
-	// Get the Nth element in the matched element set OR
-	// Get the whole matched element set as a clean array
+	// 通过index取到其中的第几个元素
 	get: function( num ) {
 
-		// Return all the elements in a clean array
+		// 返回所有包含所有元素节点的新数组--->即返回一个原来的元素节点数组 
 		if ( num == null ) {
 			return slice.call( this );
 		}
-
-		// Return just the one element from the set
+    // 如果是负index的情况则进行与数组节点元素的长度相加，否则直接取其元素
 		return num < 0 ? this[ num + this.length ] : this[ num ];
 	},
 
 	// 入栈
 	pushStack: function( elems ) {
 
-		// Build a new jQuery matched element set
+		// uild a new jQuery matched element set
 		var ret = jQuery.merge( this.constructor(), elems );
 
 		// Add the old object onto the stack (as a reference)
@@ -83,7 +80,6 @@ jQuery.fn = jQuery.prototype = {
 		return ret;
 	},
 
-	// Execute a callback for every element in the matched set.
 	each: function( callback ) {
 		return jQuery.each( this, callback );
 	},
@@ -93,22 +89,22 @@ jQuery.fn = jQuery.prototype = {
 			return callback.call( elem, i, elem );
 		} ) );
 	},
-
+  // 入栈slice切割出后堆入栈
 	slice: function() {
 		return this.pushStack( slice.apply( this, arguments ) );
-	},
-
+  },
+  // first 和 last都是通过eq实现的
 	first: function() {
 		return this.eq( 0 );
 	},
-
 	last: function() {
 		return this.eq( -1 );
 	},
-
+  // 传入取的那个index
 	eq: function( i ) {
-		var len = this.length,
-			j = +i + ( i < 0 ? len : 0 );
+    var len = this.length,
+      // + 是为了转为数字
+      j = +i + ( i < 0 ? len : 0 );
 		return this.pushStack( j >= 0 && j < len ? [ this[ j ] ] : [] );
 	},
 
@@ -150,14 +146,13 @@ jQuery.extend = jQuery.fn.extend = function() {
 		i--;
 	}
 	for ( ; i < length; i++ ) {
-		// null/undefined的情况判断,从taiget后的参数开始遍历，飞空情况下
+		// null/undefined的情况判断,从taiget后的参数开始遍历，非空情况下
 		if ( ( options = arguments[ i ] ) != null ) {
-
-			// Extend the base object
+			// 开始遍历----options是传入的args的每一个遍历
 			for ( name in options ) {
-				src = target[ name ];
+        // 遍历一下其他的
+        src = target[ name ];
 				copy = options[ name ];
-
 				// 防止结束
 				if ( target === copy ) {
 					continue;
@@ -269,13 +264,9 @@ jQuery.extend( {
 	// results is for internal usage only
 	makeArray: function( arr, results ) {
 		var ret = results || [];
-
 		if ( arr != null ) {
 			if ( isArrayLike( Object( arr ) ) ) {
-				jQuery.merge( ret,
-					typeof arr === "string" ?
-					[ arr ] : arr
-				);
+				jQuery.merge( ret, typeof arr === "string" ? [ arr ] : arr);
 			} else {
 				push.call( ret, arr );
 			}
