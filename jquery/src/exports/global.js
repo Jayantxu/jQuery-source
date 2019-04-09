@@ -12,23 +12,22 @@ var
 	// Map over the $ in case of overwrite
 	_$ = window.$;
 
+  // 此函数用于将jQuery转为我们自定的函数
 jQuery.noConflict = function( deep ) {
 	if ( window.$ === jQuery ) {
 		window.$ = _$;
 	}
-
+  // 判断
 	if ( deep && window.jQuery === jQuery ) {
 		window.jQuery = _jQuery;
 	}
-
+  // 返回一个jQuery对象
 	return jQuery;
 };
 
 // Expose jQuery and $ identifiers, even in AMD
-// (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
-// and CommonJS for browser emulators (#13566)
 if ( !noGlobal ) {
-	window.jQuery = window.$ = jQuery;
+	window.jQu.$ = jQuery;
 }
 
 } );

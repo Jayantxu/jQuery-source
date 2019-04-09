@@ -39,7 +39,8 @@ var
 	},
 
 	// Support: Android <=4.0 only
-	// Make sure we trim BOM and NBSP
+  // Make sure we trim BOM and NBSP
+  // 在trim中用用的
 	rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
 
   // 将jQuery.fn指向prototype，再向其中原型链上加入各参数与方法
@@ -121,7 +122,8 @@ jQuery.fn = jQuery.prototype = {
 
 // jQuery的extend函数的实现
 jQuery.extend = jQuery.fn.extend = function() {
-	var options, name, src, copy, copyIsArray, clone,
+  var options, name, src, copy, copyIsArray, clone,
+
 		target = arguments[ 0 ] || {},
 		i = 1,
 		length = arguments.length,
@@ -134,7 +136,7 @@ jQuery.extend = jQuery.fn.extend = function() {
     // 目标对象变为argument[ 1 ] 或者空
     target = arguments[ i ] || {};
     // i++
-		i++;
+		i++; 
 	}
   // 判断target是字符串或方法等情况
 	if ( typeof target !== "object" && !isFunction( target ) ) {
@@ -157,21 +159,20 @@ jQuery.extend = jQuery.fn.extend = function() {
 				if ( target === copy ) {
 					continue;
 				}
-				// 深拷贝的情况下
+				// 深拷贝的情况下---是一个迭代的过程
 				if ( deep && copy && ( jQuery.isPlainObject( copy ) || ( copyIsArray = Array.isArray( copy ) ) ) ) {
             // 拷贝对象为数组
 					if ( copyIsArray ) {
 						copyIsArray = false;
 						clone = src && Array.isArray( src ) ? src : [];
-
 					} else {
 						clone = src && jQuery.isPlainObject( src ) ? src : {};
 					}
 
-					// Never move original objects, clone them
+					// 如果是数组或对象的情况，就迭代的extend进去
 					target[ name ] = jQuery.extend( deep, clone, copy );
 
-				// Don't bring in undefined values
+				// 如果不是undefined并且不是对象啥的，直接连上target对象
 				} else if ( copy !== undefined ) {
 					target[ name ] = copy;
 				}
@@ -191,24 +192,25 @@ jQuery.extend( {
 	// Assume jQuery is ready without the ready module
 	isReady: true,
 
+  // 报错
 	error: function( msg ) {
 		throw new Error( msg );
 	},
-
+  // 一个空函数，可充当空回调
 	noop: function() {},
 
+  // 检查对象是否普通对象
 	isPlainObject: function( obj ) {
 		var proto, Ctor;
 
-		// Detect obvious negatives
-		// Use toString instead of jQuery.type to catch host objects
-		if ( !obj || toString.call( obj ) !== "[object Object]" ) {
+    // 如果对象为空或者或者不为对象--->主要用于检查是否普通对象
+    if ( !obj || toString.call( obj ) !== "[object Object]" ) {
 			return false;
 		}
-
+    // 取obj的原型对象，封装了getPrototypeOf()
 		proto = getProto( obj );
 
-		// Objects with no prototype (e.g., `Object.create( null )`) are plain
+		// 没有原型对象
 		if ( !proto ) {
 			return true;
 		}
@@ -217,24 +219,22 @@ jQuery.extend( {
 		Ctor = hasOwn.call( proto, "constructor" ) && proto.constructor;
 		return typeof Ctor === "function" && fnToString.call( Ctor ) === ObjectFunctionString;
 	},
-
+  // 检查对象是否为空
 	isEmptyObject: function( obj ) {
 
-		/* eslint-disable no-unused-vars */
-		// See https://github.com/eslint/eslint/issues/6125
 		var name;
-
+    // 经试验，为空时遍历会退出
 		for ( name in obj ) {
 			return false;
 		}
 		return true;
 	},
 
-	// Evaluates a script in a global context
+  // 可以全局的执行JS脚本，相当与原生的的eval()
 	globalEval: function( code ) {
 		DOMEval( code );
 	},
-
+  // each方法，第一个参数是遍历的对象，后者是需要的回调函数
 	each: function( obj, callback ) {
 		var length, i = 0;
 
@@ -246,6 +246,7 @@ jQuery.extend( {
 				}
 			}
 		} else {
+      // 遍历obj，推入回调函数执行
 			for ( i in obj ) {
 				if ( callback.call( obj[ i ], i, obj[ i ] ) === false ) {
 					break;
@@ -256,18 +257,21 @@ jQuery.extend( {
 		return obj;
 	},
 
-	// Support: Android <=4.0 only
+  // 前后空格均替换去掉
 	trim: function( text ) {
 		return text == null ? "" : ( text + "" ).replace( rtrim, "" );
 	},
 
-	// results is for internal usage only
+	// 将类数组转为数组
 	makeArray: function( arr, results ) {
+    // 若非空，先置为数组
 		var ret = results || [];
 		if ( arr != null ) {
 			if ( isArrayLike( Object( arr ) ) ) {
+        // 数组合并
 				jQuery.merge( ret, typeof arr === "string" ? [ arr ] : arr);
 			} else {
+        // push入数组
 				push.call( ret, arr );
 			}
 		}
@@ -275,11 +279,12 @@ jQuery.extend( {
 		return ret;
 	},
 
+  // 查找位置
 	inArray: function( elem, arr, i ) {
 		return arr == null ? -1 : indexOf.call( arr, elem, i );
 	},
 
-	// 合并数组的操作方法
+	// 合并数组的操作方法，直接在first的后边接上
 	merge: function( first, second ) {
     // 获取二待合并数组长度
     // 获取一将合并数组长度
@@ -296,16 +301,15 @@ jQuery.extend( {
 		return first;
 	},
 
-  // 
+  // 传入过滤函数callback过滤数组
+  // 第三个参数的true 或者 false 是用于正向逆向选择的地方
+  // 具体可以参看grep的使用方法
 	grep: function( elems, callback, invert ) {
 		var callbackInverse,
 			matches = [],
 			i = 0,
 			length = elems.length,
 			callbackExpect = !invert;
-
-		// Go through the array, only saving the items
-		// that pass the validator function
 		for ( ; i < length; i++ ) {
 			callbackInverse = !callback( elems[ i ], i );
 			if ( callbackInverse !== callbackExpect ) {
@@ -316,7 +320,7 @@ jQuery.extend( {
 		return matches;
 	},
 
-	// arg is for internal usage only
+	// map遍历
 	map: function( elems, callback, arg ) {
 		var length, value,
 			i = 0,
@@ -326,8 +330,9 @@ jQuery.extend( {
 		if ( isArrayLike( elems ) ) {
 			length = elems.length;
 			for ( ; i < length; i++ ) {
+        // 返回执行后的结果
 				value = callback( elems[ i ], i, arg );
-
+        //  在非null的情况下，将其push入数组
 				if ( value != null ) {
 					ret.push( value );
 				}
@@ -368,19 +373,16 @@ function( i, name ) {
 
 function isArrayLike( obj ) {
 
-	// Support: real iOS 8.2 only (not reproducible in simulator)
-	// `in` check used to prevent JIT error (gh-2145)
-	// hasOwn isn't used here due to false negatives
-	// regarding Nodelist length in IE
-	var length = !!obj && "length" in obj && obj.length,
+  // 判断object中是否有 length 这个键，并且读取其长度
+  var length = !!obj && "length" in obj && obj.length,
+  // 判断obj类型
 		type = toType( obj );
 
 	if ( isFunction( obj ) || isWindow( obj ) ) {
 		return false;
 	}
-
-	return type === "array" || length === 0 ||
-		typeof length === "number" && length > 0 && ( length - 1 ) in obj;
+  //      为数组的类型        长度等于0         长度类型为数字              长度大于0         length-1要存在，即存在边界
+	return type === "array" || length === 0 || typeof length === "number" && length > 0 && ( length - 1 ) in obj;
 }
 
 return jQuery;

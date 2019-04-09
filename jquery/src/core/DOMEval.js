@@ -9,6 +9,7 @@ define( [
 		noModule: true
 	};
 
+  // 接收一段code代码
 	function DOMEval( code, doc, node ) {
 		doc = doc || document;
 
@@ -22,7 +23,8 @@ define( [
 					script[ i ] = node[ i ];
 				}
 			}
-		}
+    }
+    // 在document中插入的script进行执行,全局性的,因为 globalEval 没有传入doc
 		doc.head.appendChild( script ).parentNode.removeChild( script );
 	}
 

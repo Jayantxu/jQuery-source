@@ -43,10 +43,10 @@ var rootjQuery,
 				match = rquickExpr.exec( selector );
 			}
       
-			// Match html or make sure no context is specified for #id
+			// 匹配HTML或确保为非#id的情况
 			if ( match && ( match[ 1 ] || !context ) ) {
 
-				// HANDLE: $(html) -> $(array)
+				// 处理: $(html) -> $(array),匹配转为数组 例如
 				if ( match[ 1 ] ) {
 					context = context instanceof jQuery ? context[ 0 ] : context;
 
@@ -58,7 +58,7 @@ var rootjQuery,
 						true
 					) );
 
-					// HANDLE: $(html, props)
+					// 处理: $(html, props),如：$()
 					if ( rsingleTag.test( match[ 1 ] ) && jQuery.isPlainObject( context ) ) {
 						for ( match in context ) {
 
@@ -75,7 +75,7 @@ var rootjQuery,
 
 					return this;
 
-				// HANDLE: $(#id)
+				// 匹配: $(#id)
 				} else {
 					elem = document.getElementById( match[ 2 ] );
 
@@ -108,10 +108,8 @@ var rootjQuery,
 		// HANDLE: $(function)
 		// Shortcut for document ready
 		} else if ( isFunction( selector ) ) {
-			return root.ready !== undefined ?
-				root.ready( selector ) :
-
-				// Execute immediately if ready is not present
+			return root.ready !== undefined ? root.ready( selector ) :
+        // Execute immediately if ready is not present
 				selector( jQuery );
 		}
 
